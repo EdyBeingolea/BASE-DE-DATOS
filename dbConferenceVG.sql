@@ -1,0 +1,158 @@
+IF DB_ID('dbConferenceVG') IS NULL
+CREATE DATABASE dbConferenceVG
+PRINT 'Se ha creado la base de datos testDatabase'
+GO
+
+
+use dbConferenceVG
+go
+
+create table PARTICIPANTE
+(	
+	IDPAR int identity (1,1),
+	FECREGPAR datetime DEFAULT GETDATE(), 
+	NOMPAR varchar(60),
+	APEPAR varchar(80),
+	DNIPAR char(8),
+	TIPPAR char(1),
+	CELPAR char(9),
+	EMAPAR varchar(90),
+	DIRPAR varchar(90),
+	ESTPAR char(1),
+	constraint IDPAR_PK PRIMARY KEY (IDPAR)
+) 
+go
+
+create table PONENTE
+(
+	CODPON CHAR(5),
+	NOMPON VARCHAR(80),
+	APEPON VARCHAR(60),
+	CELPON CHAR(9),
+	DNIPON CHAR(8),
+	EMAPON VARCHAR(90),
+	DIRPON VARCHAR(80),
+	CONSTRAINT CODPON_PK PRIMARY KEY (CODPON)
+) 
+go
+
+create table CONFERENCIA
+(
+	CODCONF CHAR(5),
+	TEMCONF VARCHAR(90),
+	FECCONF DATE ,
+	CODPON CHAR(5),
+	CONSTRAINT CODCONF_PK PRIMARY KEY (CODCONF)
+)
+GO
+
+create table REGISTRO
+( 
+	CODREG CHAR(5),
+	IDPAR INT,
+	FECREG datetime DEFAULT GETDATE(),
+	CERTREG CHAR(1),
+	CONSTRAINT CODREG_PK PRIMARY KEY (CODREG)
+)
+GO
+
+create table REGISTRODETALLE
+( 
+	IDREGDET INT IDENTITY(1,1),
+	CODREG CHAR(5),
+	CODCONF CHAR(5),
+	CANTPART INT,
+	CONSTRAINT IDREGDET_PK PRIMARY KEY (IDREGDET)
+)
+GO
+
+ALTER TABLE REGISTRO
+ADD CONSTRAINT PARTICIPANTE_FK FOREIGN KEY (IDPAR)
+REFERENCES PARTICIPANTE (IDPAR)
+GO
+
+ALTER TABLE REGISTRODETALLE
+ADD CONSTRAINT REGISTRO_FK FOREIGN KEY (CODREG)
+REFERENCES REGISTRO (CODREG)
+GO
+
+ALTER TABLE REGISTRODETALLE
+ADD CONSTRAINT CONFERENCIA_FK FOREIGN KEY (CODCONF)
+REFERENCES CONFERENCIA (CODCONF)
+GO
+
+ALTER TABLE CONFERENCIA
+ADD CONSTRAINT PONENTE_FK FOREIGN KEY (CODPON)
+REFERENCES PONENTE (CODPON)
+GO
+
+
+
+INSERT INTO PARTICIPANTE
+(NOMPAR,APEPAR,DNIPAR,TIPPAR,CELPAR,EMAPAR,DIRPAR,ESTPAR)
+VALUES
+('JUAN','CAMPOS PEREZ','40255133','1','986512478','juan.campos@vallegrande.edu.pe','Av.Miraflores','A'),
+('SOFIA','SOLANO AVILA','64978531','1','974815258','sofia.solano@vallegrande.edu.pe','Jr. Huallaga','A'),
+('MARIA','ROSALES GUERRA','15925874','1','986532147','maria.rosales@vallegrande.edu.pe','Calle girasoles','A'),
+('MARCOS','ALARCON HERMOSA','48781512','2','','marcos.alarcon@vallegrande.edu.pe','','A'),
+('MARTIN','SAMAN ARATA','84152631','2','','martin.saman@vallegrande.edu.pe','Jr. La union','A'),
+('JOSE','QUISPE LUYO','48161937','2','931764521','jose.quispe@vallegrande.edu.pe','Calle Abancay','A'),
+('CLAUDIA','BARRAZA CARRASCO','78451596','3','','cbarraza@gamil.com','Jr. Las Gardenias','A'),
+('JHOHANA','BENDEZU ANCCASI','74321564','3','','jbendezu@yahoo.com','','A'),
+('MARIO','ACOSTA PALOMINO','15326499','3','93176521','mario.acosta@outlook.com','Av. -Miraflores','A')
+GO
+
+INSERT INTO PONENTE
+(CODPON,NOMPON,APEPON,CELPON,DNIPON,EMAPON,DIRPON)
+VALUES
+('P0001','ALBERTO','CORRALES LOZADA','','15263798','alberto.corrales@yahoo.com','Calle Los Portales'),
+('P0002','JUANA','SANCHEZ ORTEGA','974815258','15953575','juana.sanchez@outlook.com','Av La Libertad'),
+('P0003','JAVIER','NAKASONE VILLA','995236147','15953575','javier.nakasone@gmail.com','Jr. San Martin'),
+('P0004','SONIA','HUAYTA','','12657814','sonia.hauyta@gmail.com','Av Las Gardenias'),
+('P0005','FABIANO','CARRION AVILLA','','12233647','','Jr. Huancayo')
+go
+
+
+SET DATEFORMAT dmy
+GO
+INSERT INTO CONFERENCIA
+(CODCONF,TEMCONF,FECCONF,CODPON)
+VALUES
+('C0001','Destion de datos con MySQL','15/7/2022','P0001'),
+('C0002','Joins  paso a paso','16/7/2022','P0002'),
+('C0003','Consultas con parametros','17/7/2022','P0003'),
+('C0004','Abmisnistracion base de datos MySQL','16/7/2022','P0002'),
+('C0005','Gestion de backup de Base de Datos','15/7/2022','P0004')
+go
+
+
+INSERT INTO REGISTRO
+(CODREG,IDPAR,CERTREG)
+VALUES
+('R0001','7','S'),
+('R0002','7','S'),
+('R0003','7','S'),
+('R0004','7','S'),
+('R0005','8','N'),
+('R0006','7','N'),
+('R0007','9','N'),
+('R0008','9','N')
+GO
+
+INSERT INTO REGISTRODETALLE
+(CODREG,CODCONF,CANTPART)
+VALUES
+('R0001','C0001','2'),
+('R0001','C0002','1'),
+('R0002','C0001','4'),
+('R0002','C0003','1'),
+('R0003','C0004','1'),
+('R0004','C0005','2'),
+('R0005','C0005','3'),
+('R0005','C0003','2'),
+('R0006','C0002','3'),
+('R0006','C0003','4'),
+('R0007','C0005','2'),
+('R0007','C0003','6'),
+('R0008','C0005','1')
+GO
